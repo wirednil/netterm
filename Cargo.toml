@@ -1,0 +1,11 @@
+[package]
+name = "form"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+cursive = "0.20"
+logos = "0.14"
+regex = "1.5"
+log = "0.4"
+simplelog = "0.11"
