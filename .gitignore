@@ -2,4 +2,5 @@
 
 .vscode
 ll
-
+.vscode/settings.json
+.vscode/**
