@@ -180,11 +180,8 @@ fn mask_date_time(input: &str, _cursor: &mut usize) -> String {
 
 
 fn convert_to_day(t: char, u: char) -> i32 {
-    
     let tens  = t.to_string().parse::<i32>().unwrap();
     let units = u.to_string().parse::<i32>().unwrap();
-
-    // Combinar los dígitos para formar el número
     let day = (tens * 10 + units) as u8;
     println!("({} * 10 = {}) + {} = {}", tens, tens*10, units, day);
     i32::from(day)
@@ -193,11 +190,8 @@ fn convert_to_day(t: char, u: char) -> i32 {
 fn convert_to_month(t: char, u: char) -> i32 {
     let tens  = t.to_string().parse::<i32>().unwrap();
     let units = u.to_string().parse::<i32>().unwrap();
-
-    // Combinar los dígitos para formar el número
     let month = (tens * 10 + units) as u8;
     println!("({} * 10 = {}) + {} = {}", tens, tens*10, units, month);
-
     i32::from(month)
 }
 
