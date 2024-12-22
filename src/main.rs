@@ -1,4 +1,3 @@
-mod lexer_form;
 mod customs;
 mod form;
 use log::{info};

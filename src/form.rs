@@ -1,8 +1,7 @@
-use lexer_form::Token;
-use logos::Logos;
+use serde::Deserialize;
+use serde_xml_rs::from_str;
 use crate::customs::str::CustomStr;
 use crate::customs::views::edit_date_view::EditDateView;
-use crate::lexer_form::{self};
 use cursive::traits::*;
 use cursive::views::{Dialog, EditView, LinearLayout, TextView};
 use cursive::Cursive;
@@ -10,7 +9,6 @@ use cursive::CursiveExt;
 use std::collections::VecDeque;
 use std::fs::File;
 use std::io::{Read, self};
-use std::ptr::{null, self};
 use cursive::views::ViewRef;
 
 use regex::Regex;
@@ -71,12 +69,12 @@ impl ConfigurableForm {
     }
 
     pub fn add_label(&mut self, label: &str) {
-        self.label_and_field.name = label.clean_text().to_string();
         self.label_and_field.config.label = label.to_string();
     }
 
-    pub fn add_field(&mut self, field_type: FieldType, max_length: usize) {
-        println!("Size: {}",max_length);
+    pub fn add_field(&mut self, id: String, field_type: FieldType, max_length: usize) {
+        println!("Size: {}",max_length);        
+        self.label_and_field.name = id.clone();
         self.label_and_field.config.field_type = field_type;
         self.label_and_field.config.max_length = max_length;
         self.fields.push_back(self.label_and_field.clone());
@@ -85,6 +83,9 @@ impl ConfigurableForm {
     pub fn show(&mut self) {
         let mut layout = LinearLayout::vertical();
         let mut horizontal_layout;
+
+        self.siv.load_toml(include_str!("../assets/styles.toml")).unwrap();
+
         for field in &self.fields {
             let name_clone = field.name.clone();
             let name = field.name.to_string();
@@ -194,10 +195,20 @@ fn on_edit_time(siv: &mut Cursive, _content: &str, _cursor: usize) {
     }
 }
 
+#[derive(Debug, Deserialize)]
+struct InputField {
+    id: String,
+    label: String,
+    #[serde(rename = "type")]
+    input_type: String,
+    size: Option<usize>, // Para campos de texto o numérico
+    format: Option<String>, // Para campos con formato como fecha o decimales
+}
+
+#[derive(Debug, Deserialize)]
 pub struct Form {
-    name: String,
-    file: File,
-    input: String,
+    title: String,
+    input: Vec<InputField>,
 }
 
 fn limit_length(value: usize) -> usize {
@@ -210,50 +221,53 @@ fn limit_length(value: usize) -> usize {
 }
 
 impl Form {
-    pub fn new(name: &str) -> Result<Self,io::Error> {
-        // Abrir y leer el archivo clie.form
-        let mut f = File::open(name)?;
+    pub fn new(file_name: &str) -> Result<Self, io::Error> {
+        let mut file = File::open(file_name)?;
         let mut buffer = String::new();
-        f.read_to_string(&mut buffer)?;
+        file.read_to_string(&mut buffer)?;
 
-        Ok(Form {
-            name: name.to_string(),
-            file: f,
-            input: buffer,
-        })
+        let form: Form = from_str(&buffer).map_err(|err| {
+            io::Error::new(io::ErrorKind::InvalidData, format!("XML Parsing Error: {:?}", err))
+        })?;
+
+        Ok(form)
     }
 
     pub fn make_form(&mut self) {
-        let mut lexer = Token::lexer(self.input.as_str());
+        println!("Formulario: {}", self.title);
         let mut form = ConfigurableForm::new();
-
-        while let Some(token) = lexer.next() {
-            let mut label = "";
-            let field = lexer.slice();
-            match token {
-                Ok(Token::Label) => {
-                    label = lexer.slice();
-                    form.add_label(label);
-                },
-                Ok(Token::FieldAlphanumeric) => {
-                    form.add_field(FieldType::Text, limit_length(field.len()));
-                },
-                Ok(Token::FieldNumeric) => {
-                    form.add_field(FieldType::Number, limit_length(field.len()));
-                },
-                Ok(Token::FieldShortDate) => {
-                    form.add_field(FieldType::Date, limit_length(field.len()));
-                },
-                Ok(Token::FieldLongDate) => {
-                    form.add_field(FieldType::Date, limit_length(field.len()));
-                },
-                Ok(Token::FieldShortTime) => {
-                    form.add_field(FieldType::Time, limit_length(field.len()));
-                },
-                Ok(Token::FieldLongTIme) => {
-                    form.add_field(FieldType::Time, limit_length(field.len()));
-                },
-                _ => (),
+        for field in &self.input {
+            form.add_label(&field.label);
+            match field.input_type.as_str() {
+                "text" => {
+                    form.add_field(field.id.clone(), FieldType::Text, limit_length(field.size.unwrap()));
+                    // println!("Campo de texto: {} (Size: {:?})", field.label, field.size);
+                }
+                "numeric" => {
+                    form.add_field(field.id.clone(), FieldType::Number, limit_length(field.size.unwrap()));
+                    println!("Campo numérico: {} (Size: {:?})", field.label, field.size);
+                }
+                "decimal" => {
+                    form.add_field(field.id.clone(), FieldType::Number, limit_length(field.size.unwrap()));
+                    if let Some(format) = &field.format {
+                        println!("Campo decimal: {} (Format: {})", field.label, format);
+                    }
+                }
+                "date" => {
+                    form.add_field(field.id.clone(), FieldType::Date, limit_length(field.format.clone().unwrap().len()));
+                    if let Some(format) = &field.format {
+                        println!("Campo de fecha: {} (Format: {})", field.label, format);
+                    }
+                }
+                "time" =>  {
+                    form.add_field(field.id.clone(), FieldType::Time, limit_length(field.format.clone().unwrap().len()));
+                    if let Some(format) = &field.format {
+                        println!("Campo de time: {} (Format: {})", field.label, format);
+                    }
+                }
+                _ => {
+                    println!("Campo no soportado: {}", field.label);
+                }
             }
         }
         form.show();

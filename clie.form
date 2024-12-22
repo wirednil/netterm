@@ -1,9 +1,10 @@
-Número de Cliente   : ____.  
-Nombre              : ______________________________
-Dirección           : ______________________________
-Provincia           : ____________________
-Localidad           : ____________________
-Código postal       : ____
-Fecha de alta       : __/__/____
-I.V.A.              : __.__
-Límite de Compra    : ____.__
+<form>
+	<title>Formulario de prueba jeje</title>
+    <input id="numero_cliente" label="Número de Cliente : " type="numeric" size="6"/>
+    <input id="nombre" 		   label="Nombre            : " type="text"    size="31"/>
+    <input id="direccion"      label="Dirección         : " type="text"    size="31"/>
+    <input id="provincia"      label="Provincia         : " type="text"    size="21"/>
+    <input id="fecha_alta"     label="Fecha de alta     : " type="date"    format="dd/mm/yyyy"/>
+	<input id="i_v_a"          label="I.V.A.            : " type="decimal" size="4" format="2.2"/>
+    <input id="limite_compra"  label="Límite de Compra  : " type="decimal" size="6" format="6.2"/>
+</form>
