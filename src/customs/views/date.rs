@@ -195,10 +195,10 @@ fn convert_to_month(t: char, u: char) -> i32 {
     i32::from(month)
 }
 
-pub fn callback_del(s: &mut Cursive){
+pub fn callback_del(_s: &mut Cursive){
     println!("Ignorando del")
 }
 
-pub fn callback_bs(s: &mut Cursive){
+pub fn callback_bs(_s: &mut Cursive){
     println!("Ignorando backspace");
 }
