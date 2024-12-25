@@ -16,11 +16,11 @@ borders = "simple" # Alternatives are "none" and "simple"
 
 	# If the value is an array, the first valid
 	# and supported color will be used.
-    background = "black"
+	background = "262626"
 
 	# If the terminal doesn't support custom color (like the linux TTY),
 	# non-base colors will be skipped.
-    shadow     = "#F88"
+	shadow     = "#5f00ff"
 	view       = "black"
 
 	# An array with a single value has the same effect as a simple value.
@@ -30,7 +30,7 @@ borders = "simple" # Alternatives are "none" and "simple"
 
 	# Hex values can use lower or uppercase.
 	# (base color MUST be lowercase)
-	title_primary   = ["F88", "yellow"] # `BLUE` will be skipped.
+	title_primary   = ["ff5f00", "yellow"] # `BLUE` will be skipped.
 	title_secondary = "#ffff55"
 
 	# Lower precision values can use only 3 digits.
