@@ -1,0 +1,46 @@
+<form>
+    <title>Ingreso al sistema</title>
+	<conteiner>
+	    <input id="user" 
+			   label="Usuario: " 
+			   type="text" 
+			   size="18" 
+			   required="true"/>
+			   
+        <input id="password" 
+		       label="Contraseña: " 
+			   type="text" 
+			   size="18" 
+			   required="true"/>
+			   
+		<input id="default_profile" 
+		       label="Perfil predeterminado: " 
+			   type="text" 
+			   size="18" 
+			   default=""/>
+			   
+
+			<input id="change_pass" 
+			       label="Cambiar Contraseña: "
+				   type="text" 
+			   	   size="2" 
+				   default="false"/>
+
+
+		<horizontal>
+
+				   
+			<input id="server" 
+			       label="Servidor: " 
+				   type="text" 
+				   size="18" 
+				   default=""/>
+				   
+			<input id="port" 
+			       label="Puerto: " 
+				   type="numeric" 
+				   size="4" 
+				   default="8080"/>
+		</horizontal>
+	</conteiner>
+</form>
